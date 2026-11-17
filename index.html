@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color" content="#101426">
+
+<title>MoyenneFacile</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{margin:0;background:#101426;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;padding:22px 18px 100px}
+
+header{display:flex;justify-content:space-between;align-items:center;margin:15px 0 30px}
+
+.logo{font-size:25px;font-weight:850;letter-spacing:-1px}
+
+.logo span{color:#9c83ff}
+
+.pill{background:#252b42;color:#b9aaff;border-radius:20px;padding:8px 12px;font-size:12px}
+
+h1{font-size:29px;margin:12px 0 5px}
+
+.sub{color:#9ba4bd;font-size:14px}
+
+.card{background:#1c2339;border:1px solid #303952;border-radius:22px;padding:20px;margin:20px 0}
+
+.average{background:linear-gradient(135deg,#6651d8,#9278f5);border:0}
+
+.average small{opacity:.85}
+
+.number{font-size:46px;font-weight:850;margin:8px 0}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.stat{background:#252d45;border-radius:16px;padding:15px}
+
+.stat strong{display:block;font-size:23px;margin-top:8px}
+
+h2{font-size:19px}
+
+input{width:100%;padding:14px;background:#11182a;border:1px solid #39435e;border-radius:12px;color:white;font-size:16px;margin:7px 0 14px}
+
+label{font-size:13px;color:#bac3da}
+
+button{border:0;border-radius:13px;padding:14px;font-weight:750;font-size:15px;cursor:pointer}
+
+.primary{background:#9278f5;color:white;width:100%}
+
+.secondary{background:#303952;color:white}
+
+.subject{background:#252d45;border-radius:14px;padding:14px;margin:10px 0}
+
+.subject-top{display:flex;justify-content:space-between;align-items:center}
+
+.subject strong{font-size:17px}
+
+.muted{color:#a5aec4;font-size:13px}
+
+.delete{background:#492b3c;color:#ff9cac;padding:8px 11px}
+
+.progress{height:7px;background:#39435e;border-radius:8px;margin-top:12px;overflow:hidden}
+
+.progress div{height:100%;background:#a58aff}
+
+nav{position:fixed;bottom:0;left:0;right:0;background:#1b2236;border-top:1px solid #38415b;display:flex;justify-content:space-around;padding:13px 5px calc(13px + env(safe-area-inset-bottom))}
+
+nav button{background:transparent;color:#9da8c3;font-size:12px;padding:8px}
+
+nav button.active{color:#b39cff}
+
+.page{display:none}
+
+.page.active{display:block}
+
+.empty{text-align:center;color:#9ba4bd;padding:20px}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">Moyenne<span>Facile</span></div>
+
+<div class="pill">MON ESPACE</div>
+
+</header>
+
+<section id="home" class="page active">
+
+<p class="sub">TON ESPACE SCOLAIRE</p>
+
+<h1>Bonjour ! 👋</h1>
+
+<p class="sub">Prêt à suivre tes progrès ?</p>
+
+<div class="card average">
+
+<small>MA MOYENNE GÉNÉRALE</small>
+
+<div class="number" id="average">-- / 20</div>
+
+<small id="message">Ajoute tes premières notes !</small>
+
+</div>
+
+<div class="grid">
+
+<div class="stat">
+
+<span class="muted">Matières</span>
+
+<strong id="subjectsCount">0</strong>
+
+</div>
+
+<div class="stat">
+
+<span class="muted">Notes</span>
+
+<strong id="gradesCount">0</strong>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>🎯 Mon objectif</h2>
+
+<label>Ma moyenne souhaitée sur 20</label>
+
+<input id="goal" type="number" min="0" max="20" step="0.5" placeholder="Ex : 15">
+
+<button class="primary" onclick="saveGoal()">Enregistrer mon objectif</button>
+
+<p class="muted" id="goalMessage"></p>
+
+</div>
+
+</section>
+
+<section id="notes" class="page">
+
+<h1>Mes notes 📚</h1>
+
+<p class="sub">Ajoute tes notes et leurs coefficients.</p>
+
+<div class="card">
+
+<label>Matière</label>
+
+<input id="subject" placeholder="Ex : Mathématiques">
+
+<label>Ta note</label>
+
+<input id="grade" type="number" min="0" step="0.01" placeholder="Ex : 16">
+
+<label>Note sur</label>
+
+<input id="outof" type="number" min="0.01" value="20" step="0.5">
+
+<label>Coefficient</label>
+
+<input id="coefficient" type="number" min="0.01" value="1" step="0.5">
+
+<button class="primary" onclick="addGrade()">+ Ajouter ma note</button>
+
+</div>
+
+<h2>Mon carnet de notes</h2>
+
+<div id="gradeList"></div>
+
+</section>
+
+<section id="objectifs" class="page">
+
+<h1>Mes objectifs 🎯</h1>
+
+<p class="sub">Suis ta progression scolaire.</p>
+
+<div class="card">
+
+<h2>Ma progression</h2>
+
+<div class="number" id="progressNumber">0%</div>
+
+<div class="progress"><div id="progressBar" style="width:0%"></div></div>
+
+<p class="muted" id="progressText">Ajoute des notes pour commencer.</p>
+
+</div>
+
+</section>
+
+<section id="profil" class="page">
+
+<h1>Mon profil 👤</h1>
+
+<div class="card">
+
+<h2>MoyenneFacile</h2>
+
+<p class="muted">Ton assistant pour suivre tes résultats scolaires.</p>
+
+<p>Version 1.0</p>
+
+<button class="secondary" onclick="resetData()">Effacer toutes mes notes</button>
+
+</div>
+
+</section>
+
+<nav>
+
+<button class="active" onclick="showPage('home',this)">⌂<br>Accueil</button>
+
+<button onclick="showPage('notes',this)">▤<br>Mes notes</button>
+
+<button onclick="showPage('objectifs',this)">◎<br>Objectifs</button>
+
+<button onclick="showPage('profil',this)">◉<br>Profil</button>
+
+</nav>
+
+<script>
+
+let grades=JSON.parse(localStorage.getItem('mf_grades')||'[]');
+
+let goal=localStorage.getItem('mf_goal')||'';
+
+function save(){
+
+localStorage.setItem('mf_grades',JSON.stringify(grades));
+
+render();
+
+}
+
+function average(){
+
+let total=0,weights=0;
+
+grades.forEach(g=>{
+
+total+=(g.value/g.outof)*20*g.coef;
+
+weights+=g.coef;
+
+});
+
+return weights?total/weights:null;
+
+}
+
+function addGrade(){
+
+let name=document.getElementById('subject').value.trim();
+
+let value=Number(document.getElementById('grade').value);
+
+let outof=Number(document.getElementById('outof').value);
+
+let coef=Number(document.getElementById('coefficient').value);
+
+if(!name||!Number.isFinite(value)||!Number.isFinite(outof)||!Number.isFinite(coef)||outof<=0||coef<=0||value<0||value>outof){
+
+alert('Vérifie ta matière, ta note, le barème et le coefficient.');
+
+return;
+
+}
+
+grades.push({id:Date.now(),name,value,outof,coef});
+
+document.getElementById('subject').value='';
+
+document.getElementById('grade').value='';
+
+save();
+
+alert('Note ajoutée !');
+
+}
+
+function removeGrade(id){
+
+grades=grades.filter(g=>g.id!==id);
+
+save();
+
+}
+
+function saveGoal(){
+
+let n=Number(document.getElementById('goal').value);
+
+if(!Number.isFinite(n)||n<0||n>20){
+
+alert('Entre un objectif entre 0 et 20.');
+
+return;
+
+}
+
+goal=n;
+
+localStorage.setItem('mf_goal',goal);
+
+render();
+
+}
+
+function resetData(){
+
+if(confirm('Effacer toutes tes notes ?')){
+
+grades=[];
+
+localStorage.removeItem('mf_grades');
+
+save();
+
+}
+
+}
+
+function showPage(id,button){
+
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+
+document.getElementById(id).classList.add('active');
+
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+
+button.classList.add('active');
+
+}
+
+function render(){
+
+let avg=average();
+
+document.getElementById('average').textContent=avg===null?'-- / 20':avg.toFixed(2).replace('.',',')+' / 20';
+
+document.getElementById('subjectsCount').textContent=new Set(grades.map(g=>g.name.toLowerCase())).size;
+
+document.getElementById('gradesCount').textContent=grades.length;
+
+document.getElementById('message').textContent=avg===null?'Ajoute tes premières notes !':avg>=10?'Bravo, continue comme ça !':'Continue tes efforts !';
+
+document.getElementById('goal').value=goal;
+
+document.getElementById('gradeList').innerHTML=grades.length?grades.map(g=>`
+
+<div class="subject">
+
+<div class="subject-top">
+
+<strong>${escapeHTML(g.name)}</strong>
+
+<button class="delete" onclick="removeGrade(${g.id})">Supprimer</button>
+
+</div>
+
+<p class="muted">${g.value}/${g.outof} · Coefficient ${g.coef}</p>
+
+</div>`).join(''):'<div class="empty">Aucune note pour le moment. Ajoute ta première note !</div>';
+
+let percent=avg===null?0:Math.min(100,Math.round(avg/20*100));
+
+document.getElementById('progressNumber').textContent=percent+'%';
+
+document.getElementById('progressBar').style.width=percent+'%';
+
+document.getElementById('progressText').textContent=avg===null?'Ajoute des notes pour commencer.':'Ta moyenne actuelle est de '+avg.toFixed(2).replace('.',',')+'/20.';
+
+document.getElementById('goalMessage').textContent=goal===''?'':avg===null?'Objectif enregistré : '+goal+'/20':'Objectif : '+goal+'/20. '+(avg>=goal?'Objectif atteint !':'Continue tes efforts !');
+
+}
+
+function escapeHTML(s){
+
+return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+}
+
+render();
+
+</script>
+
+</body>
+
+</html>
